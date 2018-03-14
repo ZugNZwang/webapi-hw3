@@ -3,6 +3,8 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var authJwtController = require('./auth_jwt');
 var User = require('./Users');
+var Movie = require('./Movies');
+var Actor = require('./Movies');
 var jwt = require('jsonwebtoken');
 
 var app = express();
@@ -59,7 +61,7 @@ router.post('/signup', function(req, res) {
         user.save(function(err) {
             if (err) {
                 // duplicate entry
-                if (err.code == 11000)
+                if (err.code === 11000)
                     return res.json({ success: false, message: 'A user with that username already exists. '});
                 else
                     return res.send(err);
@@ -89,10 +91,74 @@ router.post('/signin', function(req, res) {
                 res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
             }
         });
-
-
     });
 });
+
+
+router.route('/movies')
+    .post(authJwtController.isAuthenticated, function (req, res) {
+
+        var movie = new Movie();
+        var actor = new Actor();
+
+        movie.title = req.body.title;
+        movie.year = req.body.year;
+        movie.genre = req.body.genre;
+
+        actor.actorName = req.body.actorName;
+        actor.characterName = req.body.characterName;
+
+        movie.actors = req.body.actors;
+
+        movie.save(function(err) {
+            if (err) return res.send(err);
+
+            res.json({ message: 'Movie created!' });
+        });
+    })
+
+    .get(authJwtController.isAuthenticated, function (req, res) {
+
+        Movie.findByTitle(req.params.title, function(err, movie) {
+
+            if (err) res.send(err);
+
+            var movieJSON = JSON.stringify(movie);
+            //return that movie
+            res.json(movie);
+        })
+    })
+
+    .put(authJwtController.isAuthenticated, function (req, res) {
+
+        Movie.findByTitle(req.params.title, function(err, movie) {
+            if (err) res.send(err);
+
+            if (req.body.title) movie.title = req.body.title;
+            if (req.body.year) movie.year = req.body.year;
+            if (req.body.genre) movie.genre = req.body.genre;
+            if (req.body.actorName) movie.actors.actorName = req.body.actorName;
+            if (req.body.characterName) movie.actors.characterName = req.body.characterName;
+
+            movie.save(function(err) {
+              if (err) res.send(err);
+
+                res.json({ message: 'Movie updated!' });
+            })
+        })
+    })
+
+    .delete(authJwtController.isAuthenticated, function (req, res) {
+        Movie.remove({
+            _title: req.params.title
+        }, function(err, movie) {
+                if (err) return res.send(err);
+
+                res.json({ message: 'Successfully deleted' });
+        });
+    });
+
+
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);

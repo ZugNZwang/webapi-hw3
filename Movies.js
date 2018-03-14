@@ -3,21 +3,43 @@ var Schema = mongoose.Schema;
 
 mongoose.connect(process.env.DB);
 
+// Actor schema
 var ActorSchema = new Schema ({
-    actorName: String,
-    characterName: String
+    actorName: { type: String, required: true },
+    characterName: { type: String, required: true }
 });
 
-// movie schema
+// Movie schema
 var MovieSchema = new Schema({
-    title: String,
-    year: Number,
-    genre: String,
-    actors: [ActorSchema]
+    title: { type: String, required: true },
+    year: {
+        type: Number,
+        min: 1880,
+        max: 2018,
+        required: true
+    },
+    genre: {
+        type: String,
+        enum: ['Action','Adventure', 'Comedy',
+            'Drama','Fantasy','Horror', 'Mystery',
+            'Thriller', 'Western'],
+        required: true
+    },
+    actors: { type: [ActorSchema], required: true }
 });
 
-
-
+MovieSchema.pre('save', function(next) {
+  if(this.actors.length < 3) {
+      return next(new Error('Fewer than 3 Actors'));
+  }
+});
+/*
+MovieSchema.pre('save', function(next) {
+    if(this.length < 5)
+    {
+        return next(new Error('Fewer than 5 Movies'));
+    }
+});*/
 
 // return the model
 module.exports = mongoose.model('Movie', MovieSchema);
