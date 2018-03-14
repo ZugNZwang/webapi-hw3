@@ -1,4 +1,3 @@
-var dotenv = require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var passport = require('passport');
@@ -105,6 +104,10 @@ router.route('/movies')
         movie.title = req.body.title;
         movie.year = req.body.year;
         movie.genre = req.body.genre;
+
+        actor.actorName = req.body.actorName;
+        actor.characterName = req.body.characterName;
+
         movie.actors = req.body.actors;
 
         movie.save(function(err) {
@@ -134,7 +137,8 @@ router.route('/movies')
             if (req.body.title) movie.title = req.body.title;
             if (req.body.year) movie.year = req.body.year;
             if (req.body.genre) movie.genre = req.body.genre;
-            if (req.body.actors) movie.actors = req.body.actors;
+            if (req.body.actorName) movie.actors.actorName = req.body.actorName;
+            if (req.body.characterName) movie.actors.characterName = req.body.characterName;
 
             movie.save(function(err) {
               if (err) res.send(err);
