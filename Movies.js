@@ -33,13 +33,6 @@ MovieSchema.pre('save', function(next) {
       return next(new Error('Fewer than 3 Actors'));
   }
 });
-/*
-MovieSchema.pre('save', function(next) {
-    if(this.length < 5)
-    {
-        return next(new Error('Fewer than 5 Movies'));
-    }
-});*/
 
 // return the model
 module.exports = mongoose.model('Movie', MovieSchema);
