@@ -106,9 +106,12 @@ router.route('/movies')
         movie.actors = req.body.actors;
 
         movie.save(function(err) {
-            if (err) return res.send(err);
-
-            res.json({ message: 'Movie created!' });
+            if (err)
+            {
+                res.send(err);
+            }
+            else
+                res.json({ message: 'Movie created!' });
         });
     })
 
