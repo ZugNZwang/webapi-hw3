@@ -4,10 +4,10 @@ var Schema = mongoose.Schema;
 mongoose.connect(process.env.DB);
 
 // Actor schema
-var ActorSchema = new Schema ({
+/*var ActorSchema = new Schema ({
     actorName: { type: String, required: true },
     characterName: { type: String, required: true }
-});
+});*/
 
 // Movie schema
 var MovieSchema = new Schema({
@@ -25,7 +25,12 @@ var MovieSchema = new Schema({
             'Thriller', 'Western'],
         required: true
     },
-    actors: { type: [ActorSchema], required: true }
+    actors: {
+        type: [{
+            actorName: {type: String, required: true},
+            characterName: {type: String, required: true}
+        }], required: true
+    }
 });
 
 MovieSchema.pre('save', function(next) {
