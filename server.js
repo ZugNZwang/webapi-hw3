@@ -99,7 +99,6 @@ router.route('/movies')
     .post(authJwtController.isAuthenticated, function (req, res) {
 
         var movie = new Movie();
-        var actor = new Actor();
 
         movie.title = req.body.title;
         movie.year = req.body.year;
