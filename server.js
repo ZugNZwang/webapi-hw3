@@ -4,7 +4,6 @@ var passport = require('passport');
 var authJwtController = require('./auth_jwt');
 var User = require('./Users');
 var Movie = require('./Movies');
-var Actor = require('./Movies');
 var jwt = require('jsonwebtoken');
 
 var app = express();
@@ -113,45 +112,40 @@ router.route('/movies')
             else
                 res.json({ message: 'Movie created!' });
         });
-    })
+    });
 
+router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
-
-        Movie.findByTitle(req.params.title, function(err, movie) {
-
-            if (err) res.send(err);
-
-            var movieJSON = JSON.stringify(movie);
-            //return that movie
-            res.json(movie);
-        })
+        Movie.findById(req.params.movieId, function(err, movie) {
+            if (err)
+                res.send(err);
+            else
+                res.json(movie);
+        });
     })
 
     .put(authJwtController.isAuthenticated, function (req, res) {
-
-        Movie.findByTitle(req.params.title, function(err, movie) {
+        Movie.findById(req.params.movieId, function(err, movie) {
             if (err) res.send(err);
-
-            if (req.body.title) movie.title = req.body.title;
-            if (req.body.year) movie.year = req.body.year;
-            if (req.body.genre) movie.genre = req.body.genre;
-            if (req.body.actors) movie.actors = req.body.actors;
-
+            else {
+                if (req.body.title) movie.title = req.body.title;
+                if (req.body.year) movie.year = req.body.year;
+                if (req.body.genre) movie.genre = req.body.genre;
+                if (req.body.actors) movie.actors = req.body.actors;
+            }
 
             movie.save(function(err) {
               if (err) res.send(err);
-
-                res.json({ message: 'Movie updated!' });
+              else res.json({ message: 'Movie updated!' });
             })
         })
     })
 
     .delete(authJwtController.isAuthenticated, function (req, res) {
-        Movie.remove({
-            _title: req.params.title
-        }, function(err, movie) {
-                if (err) return res.send(err);
-
+        Movie.findById(req.params.movieId, function(err, movie) {
+            if (err) res.send(err);
+            else
+                movie.remove();
                 res.json({ message: 'Successfully deleted' });
         });
     });
