@@ -96,15 +96,14 @@ router.post('/signin', function(req, res) {
 
 router.route('/movies')
     .post(authJwtController.isAuthenticated, function (req, res) {
+        var movieNew = new Movie();
 
-        var movie = new Movie();
-
-        movie.title = req.body.title;
-        movie.year = req.body.year;
-        movie.genre = req.body.genre;
+        movieNew.title = req.body.title;
+        movieNew.year = req.body.year;
+        movieNew.genre = req.body.genre;
         movie.actors = req.body.actors;
 
-        movie.save(function(err) {
+        movieNew.save(function(err) {
             if (err)
             {
                 res.send(err);
@@ -112,7 +111,6 @@ router.route('/movies')
             else
                 res.json({ message: 'Movie created!' });
         });
-    });
 
 router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
