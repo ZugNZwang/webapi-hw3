@@ -103,14 +103,14 @@ router.route('/movies')
         movieNew.genre = req.body.genre;
         movie.actors = req.body.actors;
 
-        movieNew.save(function(err) {
-            if (err)
-            {
+        movieNew.save(function (err) {
+            if (err) {
                 res.send(err);
             }
             else
-                res.json({ message: 'Movie created!' });
+                res.json({message: 'Movie created!'});
         });
+    });
 
 router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
